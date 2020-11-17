@@ -75,12 +75,14 @@ class Bezier {
 			});
 		}
 	}
+
+	getPointUnder(x, y) {
+		for (const node of this.nodes) {
+			const dist = getDist(x, y, node.x, node.y);
+
+			if (dist <= 5) {
+				return node;
+			}
+		}
+	}
 }
-
-// function getSum(a, b, c, d) {
-// 	return a + b + c + d;
-// }
-
-// function getSum(...args) {
-//     return args.reduce((a, b) => a + b)
-// }

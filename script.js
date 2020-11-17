@@ -1,4 +1,4 @@
-const canvas = new Canvas({
+const app = new Application({
 	el: "canvas",
 	width: 500,
 	height: 500,
@@ -6,15 +6,32 @@ const canvas = new Canvas({
 });
 
 const bezier = new Bezier({
-	step: 0.01,
+	step: 0.001,
 	nodes: [
 		{ x: 100, y: 100 },
 		{ x: 400, y: 200 },
 		{ x: 100, y: 400 },
-		{ x: 400, y: 400 },
+		{ x: 150, y: 150 },
+		{ x: 450, y: 250 },
+		{ x: 150, y: 450 },
 	],
 });
 
-bezier.draw(canvas);
+let pointUnderMouse = null;
 
-console.log(bezier);
+app.container.push(bezier);
+
+app.tickHandlers.push(({ fps }) => {
+	if (app.mouse.over && app.mouse.click) {
+		pointUnderMouse = bezier.getPointUnder(app.mouse.x, app.mouse.y);
+	}
+
+	if (!app.mouse.left) {
+		pointUnderMouse = null;
+	}
+
+	if (app.mouse.over && pointUnderMouse) {
+		pointUnderMouse.x = app.mouse.x;
+		pointUnderMouse.y = app.mouse.y;
+	}
+});
