@@ -50,4 +50,20 @@ class Canvas {
 			context.stroke();
 		}
 	}
+
+	save() {
+		this.context.save();
+	}
+
+	restore() {
+		this.context.restore();
+	}
+
+	translate(x, y) {
+		this.context.translate(x, y);
+	}
+
+	scale(s) {
+		this.context.scale(s, s);
+	}
 }

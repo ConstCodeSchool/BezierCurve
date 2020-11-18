@@ -3,8 +3,18 @@ class Mouse {
 		this.x = 0;
 		this.y = 0;
 
+		this.pX = 0;
+		this.pY = 0;
+
+		this.dx = 0;
+		this.dy = 0;
+
+		this.cDelta = 0;
+		this.pDelta = 0;
+		this.delta = 0;
+
 		this.left = false;
-		this.pLest = false;
+		this.pLeft = false;
 
 		this.over = false;
 		this.el = el;
@@ -16,11 +26,21 @@ class Mouse {
 
 		this.el.addEventListener("mousedown", (e) => this.mousedownHandler(e));
 		this.el.addEventListener("mouseup", (e) => this.mouseupHandler(e));
+		this.el.addEventListener("wheel", (e) => this.wheelHandler(e));
 	}
 
 	tick() {
 		this.click = !this.pLeft && this.left;
 		this.pLeft = this.left;
+
+		this.dx = this.x - this.pX;
+		this.dy = this.y - this.pY;
+
+		this.pX = this.x;
+		this.pY = this.y;
+
+		this.delta = this.cDelta - this.pDelta;
+		this.pDelta = this.cDelta;
 	}
 
 	mouseenterHandler(event) {
@@ -48,5 +68,9 @@ class Mouse {
 		if (event.button === 0) {
 			this.left = false;
 		}
+	}
+
+	wheelHandler(event) {
+		this.cDelta += event.deltaY / 53;
 	}
 }

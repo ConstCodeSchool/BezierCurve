@@ -8,17 +8,25 @@ class Application {
 		});
 
 		this.mouse = new Mouse(this.canvas.el);
+		this.camera = new Camera();
 
 		this.pTimestamp = 0;
 
 		this.container = [];
 		this.tickHandlers = [];
 
+		this.resize();
+		window.addEventListener("resize", () => this.resize());
+
 		requestAnimationFrame((x) => this.tick(x));
 	}
 
 	tick(timestamp) {
 		requestAnimationFrame((x) => this.tick(x));
+
+		if (this.mouse.delta) {
+			this.camera.scale += this.mouse.delta * this.camera.scaleStep;
+		}
 
 		const diff = timestamp - this.pTimestamp;
 		const secondPart = 1000 / diff;
@@ -36,11 +44,21 @@ class Application {
 		}
 
 		this.canvas.clear();
+		this.canvas.save();
+		this.canvas.translate(this.camera.offsetX, this.camera.offsetY);
+		this.canvas.scale(this.camera.scale);
 
 		for (const item of this.container) {
 			item.draw(this.canvas);
 		}
 
+		this.canvas.restore();
+
 		this.mouse.tick();
+	}
+
+	resize() {
+		this.canvas.el.width = window.innerWidth;
+		this.canvas.el.height = window.innerHeight;
 	}
 }
