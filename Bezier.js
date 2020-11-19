@@ -2,6 +2,9 @@ class Bezier {
 	constructor(params) {
 		this.nodes = [];
 		this.step = params.step;
+		this.showCtrlPoints = params.showCtrlPoints ?? true;
+		this.showCtrlLines = params.showCtrlLines ?? true;
+		this.part = 0;
 
 		this.add(...params.nodes);
 	}
@@ -43,37 +46,56 @@ class Bezier {
 	}
 
 	draw(canvas) {
-		for (const node of this.nodes) {
-			canvas.drawCircle({
-				x: node.x,
-				y: node.y,
-				r: 5,
-				fillStyle: "red",
-			});
+		if (this.showCtrlPoints) {
+			for (const node of this.nodes) {
+				canvas.drawCircle({
+					x: node.x,
+					y: node.y,
+					r: 5,
+					fillStyle: "red",
+				});
+			}
 		}
 
-		for (let i = 0; i < this.nodes.length - 1; i++) {
-			canvas.drawLine({
-				x1: this.nodes[i].x,
-				y1: this.nodes[i].y,
-				x2: this.nodes[i + 1].x,
-				y2: this.nodes[i + 1].y,
-				strokeStyle: "red",
-				lineWidth: 1.5,
-			});
+		if (this.showCtrlLines) {
+			for (let i = 0; i < this.nodes.length - 1; i++) {
+				canvas.drawLine({
+					x1: this.nodes[i].x,
+					y1: this.nodes[i].y,
+					x2: this.nodes[i + 1].x,
+					y2: this.nodes[i + 1].y,
+					strokeStyle: "red",
+					lineWidth: 1.5,
+				});
+			}
 		}
 
 		const curve = Bezier.getCurve(this.nodes, this.step);
-		for (let i = 0; i < curve.length - 1; i++) {
-			canvas.drawLine({
-				x1: curve[i].x,
-				y1: curve[i].y,
-				x2: curve[i + 1].x,
-				y2: curve[i + 1].y,
-				strokeStyle: "black",
-				lineWidth: 2,
-			});
+		const curveLength = getCurveLength(curve);
+		const { context } = canvas;
+
+		context.beginPath();
+		context.moveTo(curve[0].x, curve[0].y);
+
+		for (let i = 1; i < curve.length; i++) {
+			context.lineTo(curve[i].x, curve[i].y);
 		}
+
+		context.strokeStyle = "black";
+		context.lineWidth = 2;
+		context.setLineDash([curveLength * this.part, curveLength]);
+		context.stroke();
+
+		// for (let i = 0; i < curve.length - 1; i++) {
+		// 	canvas.drawLine({
+		// 		x1: curve[i].x,
+		// 		y1: curve[i].y,
+		// 		x2: curve[i + 1].x,
+		// 		y2: curve[i + 1].y,
+		// 		strokeStyle: "black",
+		// 		lineWidth: 2,
+		// 	});
+		// }
 	}
 
 	getPointUnder(x, y) {

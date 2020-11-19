@@ -24,12 +24,18 @@ class Application {
 	tick(timestamp) {
 		requestAnimationFrame((x) => this.tick(x));
 
-		if (this.mouse.delta) {
+		if (this.mouse.over && this.mouse.delta) {
+			const x = (app.mouse.x - app.camera.offsetX) / app.camera.scale;
+			const y = (app.mouse.y - app.camera.offsetY) / app.camera.scale;
+
 			this.camera.scale += this.mouse.delta * this.camera.scaleStep;
+
+			app.camera.offsetX = -x * app.camera.scale + app.mouse.x;
+			app.camera.offsetY = -y * app.camera.scale + app.mouse.y;
 		}
 
 		const diff = timestamp - this.pTimestamp;
-		const secondPart = 1000 / diff;
+		const secondPart = diff / 1000;
 		const fps = 1000 / diff;
 
 		this.pTimestamp = timestamp;
@@ -44,6 +50,15 @@ class Application {
 		}
 
 		this.canvas.clear();
+
+		this.canvas.drawGrid({
+			offsetX: this.camera.offsetX % (75 * this.camera.scale),
+			offsetY: this.camera.offsetY % (75 * this.camera.scale),
+			cellSize: 75 * this.camera.scale,
+			lineWidth: 0.5,
+			strokeStyle: "green",
+		});
+
 		this.canvas.save();
 		this.canvas.translate(this.camera.offsetX, this.camera.offsetY);
 		this.canvas.scale(this.camera.scale);
