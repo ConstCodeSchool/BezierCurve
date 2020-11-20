@@ -9,40 +9,12 @@ const bezier = new Bezier({
 	step: 0.001,
 	// showCtrlLines: false,
 	// showCtrlPoints: false,
-	nodes: [
-		{ x: 100, y: 100 },
-		{ x: 400, y: 200 },
-		{ x: 100, y: 400 },
-
-		{ x: 150, y: 150 },
-		{ x: 450, y: 250 },
-		{ x: 150, y: 450 },
-
-		{ x: 200, y: 200 },
-		{ x: 500, y: 300 },
-		{ x: 200, y: 500 },
-	],
+	nodes: [new Point(100, 100), new Point(200, 200), new Point(300, 300)],
+	colors: ["red", "green", "blue", "pink"],
+	animation: false,
 });
 
 app.container.push(bezier);
-
-let speed = 1 / 2;
-
-app.tickHandlers.push(({ secondPart }) => {
-	if (speed > 0) {
-		bezier.part = Math.min(1, bezier.part + secondPart * speed);
-
-		if (bezier.part === 1) {
-			speed *= -1;
-		}
-	} else {
-		bezier.part = Math.max(0, bezier.part + secondPart * speed);
-
-		if (bezier.part === 0) {
-			speed *= -1;
-		}
-	}
-});
 
 let pointUnderMouse = null;
 app.tickHandlers.push(() => {
@@ -66,4 +38,22 @@ app.tickHandlers.push(() => {
 		pointUnderMouse.x = (app.mouse.x - app.camera.offsetX) / app.camera.scale;
 		pointUnderMouse.y = (app.mouse.y - app.camera.offsetY) / app.camera.scale;
 	}
+});
+
+app.tickHandlers.push(() => {
+	const modal = document.querySelector("#modal");
+
+	const table = document.createElement("table");
+	for (const node of bezier.nodes) {
+		const tr = document.createElement("tr");
+		table.append(tr);
+
+		tr.innerHTML = `
+			<td>${node.x}</td>
+			<td>${node.y}</td>
+		`;
+	}
+
+	modal.innerHTML = "";
+	modal.append(table);
 });

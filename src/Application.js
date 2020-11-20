@@ -49,6 +49,15 @@ class Application {
 			});
 		}
 
+		for (const item of this.container) {
+			item.tick({
+				timestamp,
+				diff,
+				secondPart,
+				fps,
+			});
+		}
+
 		this.canvas.clear();
 
 		this.canvas.drawGrid({

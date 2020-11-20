@@ -36,3 +36,10 @@ function getCurveLength(points) {
 
 	return sum;
 }
+
+function getPointBetween(x1, y1, x2, y2, part) {
+	return {
+		x: x1 + (x2 - x1) * part,
+		y: y1 + (y2 - y1) * part,
+	};
+}
